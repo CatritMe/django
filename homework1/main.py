@@ -1,27 +1,31 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
 
 # Для начала определим настройки запуска
-hostName = "localhost" # Адрес для доступа по сети
-serverPort = 8080 # Порт для доступа по сети
+hostName = "localhost"  # Адрес для доступа по сети
+serverPort = 8080  # Порт для доступа по сети
+
 
 class MyServer(BaseHTTPRequestHandler):
     """ 
         Специальный класс, который отвечает за 
         обработку входящих запросов от клиентов
     """
-    def __get_html_content(self, file):
 
+    @staticmethod
+    def __get_html_content():
+        with open('index.html', "r", encoding='utf-8') as f:
+            return f.read()
 
     def do_GET(self):
         """ Метод для обработки входящих GET-запросов """
-        page_content = 'hello'
-        self.send_response(200) # Отправка кода ответа
-        self.send_header("Content-type", "text/html") # Отправка типа данных, который будет передаваться
-        self.end_headers() # Завершение формирования заголовков ответа
-        self.wfile.write(bytes(page_content, "utf-8")) # Тело ответа
+        page_content = self.__get_html_content()
+        self.send_response(200)  # Отправка кода ответа
+        self.send_header("Content-type", "text/html")  # Отправка типа данных, который будет передаваться
+        self.end_headers()  # Завершение формирования заголовков ответа
+        self.wfile.write(bytes(page_content, "utf-8"))  # Тело ответа
 
-if __name__ == "__main__":        
+
+if __name__ == "__main__":
     # Инициализация веб-сервера, который будет по заданным параметрам в сети 
     # принимать запросы и отправлять их на обработку специальному классу, который был описан выше
     webServer = HTTPServer((hostName, serverPort), MyServer)
